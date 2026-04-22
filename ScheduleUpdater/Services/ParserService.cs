@@ -46,9 +46,8 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
             
             var groupNames = new List<string>();
             var headerEnded = false;
-            var updateTime = DateTime.UtcNow.AddTicks(
-                -(DateTime.UtcNow.Ticks % TimeSpan.TicksPerSecond)
-            );
+            var now = DateTime.UtcNow;
+            var updateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, 0, DateTimeKind.Utc);
             foreach (var row in sheet)
             {
                 if (!headerEnded && row.Cells[0].StringCellValue == "дни") //Строка с названиями групп
@@ -226,8 +225,8 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
         var endHour = int.Parse(timeMatch.Groups[3].Value);
         var endMinute = int.Parse(timeMatch.Groups[4].Value);
 
-        var startDateTime = new DateTime(date.Year, date.Month, date.Day, startHour, startMinute, 0);
-        var endDateTime = new DateTime(date.Year, date.Month, date.Day, endHour, endMinute, 0);
+        var startDateTime = new DateTime(date.Year, date.Month, date.Day, startHour-5, startMinute, 0, DateTimeKind.Utc);
+        var endDateTime = new DateTime(date.Year, date.Month, date.Day, endHour-5, endMinute, 0, DateTimeKind.Utc);
 
         return [startDateTime, endDateTime];
     }

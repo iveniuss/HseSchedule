@@ -1,5 +1,5 @@
 ﻿FROM mcr.microsoft.com/dotnet/runtime:10.0 AS base
-USER $APP_UID
+USER root
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build

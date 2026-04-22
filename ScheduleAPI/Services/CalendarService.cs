@@ -13,6 +13,7 @@ public class CalendarService
         builder.AppendLine("BEGIN:VCALENDAR");
         builder.AppendLine("VERSION:2.0");
         builder.AppendLine("PRODID:-//ScheduleAPI//Schedule Calendar//EN");
+        builder.AppendLine("X-WR-CALNAME:Расписание");
         builder.AppendLine("CALSCALE:GREGORIAN");
 
         foreach (var lesson in lessons.OrderBy(x => x.StartTime))
@@ -20,8 +21,8 @@ public class CalendarService
             builder.AppendLine("BEGIN:VEVENT");
             builder.AppendLine($"UID:{lesson.Id}-{lesson.StartTime:yyyyMMddTHHmmss}@scheduleapi");
             builder.AppendLine($"DTSTAMP:{FormatDateTimeUtc(lesson.LastUpdate)}");
-            builder.AppendLine($"DTSTART:{FormatDateTime(lesson.StartTime)}");
-            builder.AppendLine($"DTEND:{FormatDateTime(lesson.EndTime)}");
+            builder.AppendLine($"DTSTART:{FormatDateTimeUtc(lesson.StartTime)}");
+            builder.AppendLine($"DTEND:{FormatDateTimeUtc(lesson.EndTime)}");
             builder.AppendLine($"SUMMARY:{EscapeIcalText(lesson.Name)}");
 
             if (!string.IsNullOrWhiteSpace(lesson.Location))
@@ -54,11 +55,8 @@ public class CalendarService
         return builder.ToString();
     }
 
-    private static string FormatDateTime(DateTime dateTime) =>
-        dateTime.ToString("yyyyMMdd'T'HHmmss", CultureInfo.InvariantCulture);
-
     private static string FormatDateTimeUtc(DateTime dateTime) =>
-        dateTime.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
+        dateTime.ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
 
     private static string EscapeIcalText(string value) =>
         value
