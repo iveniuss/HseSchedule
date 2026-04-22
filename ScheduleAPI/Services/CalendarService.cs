@@ -12,8 +12,9 @@ public class CalendarService
 
         builder.AppendLine("BEGIN:VCALENDAR");
         builder.AppendLine("VERSION:2.0");
-        builder.AppendLine("PRODID:-//ScheduleAPI//Schedule Calendar//EN");
+        builder.AppendLine("PRODID:-//ScheduleAPI//Schedule Calendar v1.1//EN");
         builder.AppendLine("X-WR-CALNAME:Расписание");
+        builder.AppendLine("X-WR-TIMEZONE:Asia/Yekaterinburg");
         builder.AppendLine("CALSCALE:GREGORIAN");
 
         foreach (var lesson in lessons.OrderBy(x => x.StartTime))
@@ -49,7 +50,6 @@ public class CalendarService
 
             builder.AppendLine("END:VEVENT");
         }
-
         builder.AppendLine("END:VCALENDAR");
 
         return builder.ToString();
