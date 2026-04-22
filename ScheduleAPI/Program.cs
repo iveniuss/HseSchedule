@@ -24,13 +24,6 @@ public class Program
 
         var app = builder.Build();
 
-        // Ensure database is created and migrated
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<Shared.Models.ScheduleContext>();
-            db.Database.Migrate();
-        }
-
         app.MapControllers();
 
         // Configure the HTTP request pipeline.
