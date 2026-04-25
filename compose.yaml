@@ -22,7 +22,4 @@
       - ConnectionStrings__DefaultConnection=Data Source=/app/Data/database.db;Mode=ReadWrite;Cache=Shared
     volumes:
       - ./Data:/app/Data
-      
-volumes:
-  dbdata:
 

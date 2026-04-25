@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using ScheduleAPI.Services;
 
-namespace SсheduleAPI.Controllers;
+namespace ScheduleAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]

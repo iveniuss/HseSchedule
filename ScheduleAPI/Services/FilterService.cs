@@ -5,6 +5,21 @@ namespace ScheduleAPI.Services;
 
 public class FilterService(Repository repository, IConfiguration configuration)
 {
+    /// <summary>
+    /// Filters a list of lessons based on the given parameters.
+    /// </summary>
+    /// <param name="filterParams">
+    /// A dictionary of filter parameters where the key represents the lesson type and the value represents the subgroup numbers
+    /// </param>
+    /// <returns>
+    /// A list of lessons matching the provided filter criteria.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the "groupname" parameter is missing from the filter parameters.
+    /// </exception>
+    /// <exception cref="Exception">
+    /// Thrown when the "SubgroupCodes" configuration section is missing or invalid.
+    /// </exception>
     public async Task<List<Lesson>> FilterLessons(Dictionary<string, string> filterParams)
     {
         if (!filterParams.TryGetValue("groupname", out var group))

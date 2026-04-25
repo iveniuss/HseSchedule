@@ -6,6 +6,11 @@ namespace ScheduleAPI.Services;
 
 public class CalendarService
 {
+    /// <summary>
+    /// Creates iCal calendar with given lessons
+    /// </summary>
+    /// <param name="lessons">List of lessons</param>
+    /// <returns>iCal string with given lessons</returns>
     public string GetIcal(List<Lesson> lessons)
     {
         var builder = new StringBuilder();
@@ -20,7 +25,7 @@ public class CalendarService
         foreach (var lesson in lessons.OrderBy(x => x.StartTime))
         {
             builder.AppendLine("BEGIN:VEVENT");
-            builder.AppendLine($"UID:{lesson.Id}-{lesson.StartTime:yyyyMMddTHHmmss}@scheduleapi");
+            builder.AppendLine($"UID:{lesson.Id}@scheduleapi");
             builder.AppendLine($"DTSTAMP:{FormatDateTimeUtc(lesson.LastUpdate)}");
             builder.AppendLine($"DTSTART:{FormatDateTimeUtc(lesson.StartTime)}");
             builder.AppendLine($"DTEND:{FormatDateTimeUtc(lesson.EndTime)}");
@@ -55,9 +60,20 @@ public class CalendarService
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Creates date string for iCal
+    /// </summary>
+    /// <param name="dateTime">event dateTime in UTC</param>
+    /// <returns>string in iCal supported format</returns>
     private static string FormatDateTimeUtc(DateTime dateTime) =>
         dateTime.ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
 
+
+    /// <summary>
+    /// Escapes special characters in a string for use in an iCal file.
+    /// </summary>
+    /// <param name="value">The input string to escape.</param>
+    /// <returns>A string with special characters escaped for iCal compatibility.</returns>
     private static string EscapeIcalText(string value) =>
         value
             .Replace("\\", "\\\\")
