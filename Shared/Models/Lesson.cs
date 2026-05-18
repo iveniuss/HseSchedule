@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace Shared.Models;
 
-public class Lesson
+public class Lesson()
 {
     public int Id { get; set; }
     public string GroupName { get; set; } = string.Empty;
@@ -15,8 +15,23 @@ public class Lesson
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public DateTime LastUpdate { get; set; }
+
+    public Lesson(Lesson other) :this() 
+    {
+        Id = other.Id;
+        GroupName = other.GroupName;
+        Subgroup = other.Subgroup;
+        IsOptional = other.IsOptional;
+        Name = other.Name;
+        Location = other.Location;
+        Teacher = other.Teacher;
+        Link = other.Link;
+        StartTime = other.StartTime;
+        EndTime = other.EndTime;
+    }
     
     public static Lesson Empty => new();
+    
     
     public static Expression<Func<Lesson, bool>> IsDuplicateOf(Lesson target)
     {

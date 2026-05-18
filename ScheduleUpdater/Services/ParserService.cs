@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using NPOI.SS.UserModel;
+using NPOI.Util;
 using Shared;
 using Shared.Models;
 
@@ -110,6 +111,7 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
         var substrings = cellValue.Split("\n", StringSplitOptions.RemoveEmptyEntries);
         var lessons = new List<Lesson>();
         var currentLesson = Lesson.Empty;
+        var descriptionCount = 0;
 
         foreach (var substring in substrings)
         {
@@ -122,14 +124,20 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
                     {
                         lessons.Add(currentLesson);
                         currentLesson = Lesson.Empty;
+                        descriptionCount = 0;
                     }
                     currentLesson.Name = trimmedSubstring;
                     break;
                 case LineType.Description:
+                    if (descriptionCount > 0)
+                    {
+                        lessons.Add(new Lesson(currentLesson));
+                    }
                     var descriptionInfo = ParseDescription(trimmedSubstring);
                     currentLesson.Location = descriptionInfo.Location;
                     currentLesson.Subgroup = descriptionInfo.Subgroup;
                     currentLesson.Teacher = descriptionInfo.Teacher;
+                    descriptionCount++;
                     break;
                 case LineType.Link:
                     currentLesson.Link = trimmedSubstring;
