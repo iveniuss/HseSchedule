@@ -7,7 +7,7 @@ using Shared.Models;
 
 namespace ScheduleUpdater.Services;
 
-public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration configuration)
+public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration configuration, ILogger<ParserService> logger)
 {
     private enum LineType
     {
@@ -64,8 +64,17 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
                 }
                 else if (headerEnded && DateRegex.IsMatch(row.Cells[0].StringCellValue))
                 {
-                    var dates = ParseTime(row.Cells[0].StringCellValue, row.Cells[1].StringCellValue);
-                    
+                    DateTime[] dates;
+                    try
+                    {
+                        dates = ParseTime(row.Cells[0].StringCellValue, row.Cells[1].StringCellValue);
+                    }
+                    catch
+                    {
+                        logger.LogError("Error parsing time: date: {date}, time: {time}", row.Cells[0].StringCellValue, row.Cells[1].StringCellValue);
+                        continue;
+                    }
+
                     var lessons = GetLessons(row.Cells.GetRange(2, row.LastCellNum-2), groupNames, dates);
 
                     foreach (var lesson in lessons)
