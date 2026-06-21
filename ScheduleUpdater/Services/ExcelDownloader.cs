@@ -122,7 +122,7 @@ public class ExcelDownloader
             foreach (var anchor in anchorNodes)
             {
                 var text = anchor.InnerText.Trim();
-                if (text.StartsWith("Расписание занятий ("))
+                if (text.StartsWith("Расписание занятий (") || text.StartsWith("СЕССИЯ ("))
                 {
                     urls.Add( anchor.GetAttributeValue("href", string.Empty));
                 }
