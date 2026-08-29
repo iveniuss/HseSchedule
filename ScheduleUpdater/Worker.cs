@@ -23,7 +23,7 @@ public class Worker(
                 using var scope = scopeFactory.CreateScope();
                 var repository = scope.ServiceProvider.GetRequiredService<Repository>();
 
-                var workbooks = await downloader.DownloadWorkbook();
+                var workbooks = await downloader.DownloadWorkbookYd();
                 if (logger.IsEnabled(LogLevel.Information))
                     logger.LogInformation("Workbooks downloaded");
 

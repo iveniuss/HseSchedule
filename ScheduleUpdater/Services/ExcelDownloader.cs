@@ -1,9 +1,13 @@
-using System.Globalization;
+using System.Net.Http.Json;
+using System.Web;
+using HtmlAgilityPack;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-using HtmlAgilityPack;
 using NPOI.SS.Util;
+using NPOI.XSSF.UserModel;
+using ScheduleUpdater.Models;
+
+namespace ScheduleUpdater.Services;
 
 public class ExcelDownloader
 {
@@ -45,7 +49,47 @@ public class ExcelDownloader
         UnmergeCells(workbooks);
         return workbooks;
     }
-    
+
+    public async Task<List<IWorkbook>> DownloadWorkbookYd()
+    {
+        var baseUrl = _configuration["ScheduleUrl"];
+        if (string.IsNullOrEmpty(baseUrl))
+            throw new InvalidOperationException("ScheduleUrl is not set in configuration");
+
+        var encodedKey = HttpUtility.UrlEncode(baseUrl);
+        var url = $"https://cloud-api.yandex.net/v1/disk/public/resources?public_key={encodedKey}";
+
+        var response = await _httpClient.GetFromJsonAsync<YdResponse>(url);
+        var items = response?.Embedded?.Items ?? new List<YdItem>();
+        var workbooks = new List<IWorkbook>();
+        
+        foreach (var item in items)
+        {
+            if (item is { Type: "file", File: not null } &&
+                (item.Name.StartsWith("Расписание занятий (") || item.Name.StartsWith("СЕССИЯ (")))
+            {
+                await using var stream = await _httpClient.GetStreamAsync(item.File);
+
+                using var memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+                
+                var extension = Path.GetExtension(item.Name).ToLowerInvariant();
+                workbooks.Add(extension switch
+                {
+                    ".xls" => new HSSFWorkbook(memoryStream),
+                    ".xlsx" => new XSSFWorkbook(memoryStream),
+                    _ => throw new NotSupportedException($"Unsupported Excel format: {extension}")
+                }
+                );
+            }
+        }
+        
+        UnmergeCells(workbooks);
+        return workbooks;
+
+    }
+
     private void UnmergeCells(List<IWorkbook> workbooks)
     {
         foreach (var workbook in workbooks)
@@ -114,7 +158,7 @@ public class ExcelDownloader
         htmlDoc.LoadHtml(html);
 
         var anchorNodes = htmlDoc.DocumentNode.SelectNodes("//a");
-        
+
         var urls = new List<string>();
 
         if (anchorNodes != null)
@@ -124,13 +168,13 @@ public class ExcelDownloader
                 var text = anchor.InnerText.Trim();
                 if (text.StartsWith("Расписание занятий (") || text.StartsWith("СЕССИЯ ("))
                 {
-                    urls.Add( anchor.GetAttributeValue("href", string.Empty));
+                    urls.Add(anchor.GetAttributeValue("href", string.Empty));
                 }
             }
-            
+
             return urls;
         }
-        
+
 
         throw new InvalidOperationException("Excel File URL not found");
     }
