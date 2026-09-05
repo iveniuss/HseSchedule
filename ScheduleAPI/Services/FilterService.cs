@@ -45,7 +45,7 @@ public class FilterService(Repository repository, IConfiguration configuration)
             {
                 filtered = filtered.Concat(
                     lessons.Where(x =>
-                        x.Name.Contains(value) && (x.Subgroup == null || kvp.Value.Contains(x.Subgroup.ToString()))));
+                        x.Name.Contains(value) && (x.Subgroup == null || kvp.Value == "0" || kvp.Value.Contains(x.Subgroup.ToString()))));
             }
         }
 
