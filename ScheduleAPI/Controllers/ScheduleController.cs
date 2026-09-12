@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ScheduleAPI.Models;
 using Shared;
 
@@ -9,7 +10,8 @@ namespace SсheduleAPI.Controllers;
 public class ScheduleController(Repository repository) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get(string groupName)
+    [EnableRateLimiting("calendar")]
+    public async Task<IActionResult> Get([FromQuery] Dictionary<string, string> query)
     {
         var lessons = await repository.GetGroupSchedule(groupName);
         

@@ -1,5 +1,6 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Shared;
-using Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using ScheduleAPI.Services;
 
@@ -21,9 +22,31 @@ public class Program
         builder.Services.AddScoped<FilterService>();
         builder.Services.AddScoped<CalendarService>();
         builder.Services.AddControllers();
+        
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            options.AddPolicy("calendar", httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(1),
+                        QueueLimit = 0
+                    }));
+        });
+
 
         var app = builder.Build();
+        
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
 
+        app.UseRateLimiter();
         app.MapControllers();
 
         // Configure the HTTP request pipeline.
@@ -36,6 +59,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.Run();
+        
 
     }
 }

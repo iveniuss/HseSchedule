@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ScheduleAPI.Services;
 
 namespace ScheduleAPI.Controllers;
@@ -11,6 +12,7 @@ public class CalendarController(
     CalendarService calendar) : ControllerBase
 {
     [HttpGet]
+    [EnableRateLimiting("calendar")]
     public async Task<IActionResult> Get([FromQuery] Dictionary<string, string> query)
     {
         var res = await filter.FilterLessons(query);
