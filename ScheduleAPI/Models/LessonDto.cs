@@ -21,7 +21,7 @@ public class LessonDto
         Location = lesson.Location,
         Teacher = lesson.Teacher,
         Link = lesson.Link,
-        StartTime = lesson.StartTime,
-        EndTime = lesson.EndTime
+        StartTime = DateTime.SpecifyKind(lesson.StartTime, DateTimeKind.Utc),
+        EndTime = DateTime.SpecifyKind(lesson.EndTime, DateTimeKind.Utc)
     };
 }
