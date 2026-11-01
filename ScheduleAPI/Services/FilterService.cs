@@ -32,6 +32,10 @@ public class FilterService(Repository repository, IConfiguration configuration)
             throw new Exception("SubgroupCodes not found in configuration");
 
         var filtered = new List<Lesson>().AsEnumerable();
+        if (group.StartsWith("РИС-23"))
+        {
+            filterParams["NIS41"] = group[^1..];
+        }
 
         foreach (var kvp in filterParams)
         {
