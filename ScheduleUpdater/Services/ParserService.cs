@@ -36,9 +36,10 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
     private static readonly Regex DateRegex = new Regex(@"[А-Я][а-я]+\n\d{2}\.\d{2}\.\d{4}", RegexOptions.Compiled);
 
     
-    public async Task<int> UpdateDatabase(IWorkbook workbook)
+    public async Task<(int Added, int Parsed)> UpdateDatabase(IWorkbook workbook)
     {
         var added = 0;
+        var parsed = 0;
         
         foreach (var sheet in workbook)
         {
@@ -76,6 +77,7 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
                     }
 
                     var lessons = GetLessons(row.Cells.GetRange(2, row.LastCellNum-2), groupNames, dates);
+                    parsed += lessons.Count;
 
                     foreach (var lesson in lessons)
                     {
@@ -95,7 +97,7 @@ public class ParserService(IServiceScopeFactory scopeFactory, IConfiguration con
             }
         }
 
-        return added;
+        return (added, parsed);
     }
 
     private List<Lesson> GetLessons(IList<ICell> cells, List<string> groupNames, DateTime[] dates)

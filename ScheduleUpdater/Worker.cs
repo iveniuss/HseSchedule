@@ -28,16 +28,27 @@ public class Worker(
                     logger.LogInformation("Workbooks downloaded");
 
                 var lessonsAdded = 0;
+                var lessonsParsed = 0;
                 foreach (var book in workbooks)
-                    lessonsAdded += await parser.UpdateDatabase(book);
-
+                {
+                    var result = await parser.UpdateDatabase(book);
+                    lessonsAdded += result.Added;
+                    lessonsParsed += result.Parsed;
+                }
 
                 if (logger.IsEnabled(LogLevel.Information))
                     logger.LogInformation("{lessonsAdded} lessons added", lessonsAdded);
 
-                var deleted = await repository.ClearOldData();
-                if (logger.IsEnabled(LogLevel.Information))
-                    logger.LogInformation("{deleted} lessons deleted", deleted);
+                if (lessonsParsed > 0)
+                {
+                    var deleted = await repository.ClearOldData();
+                    if (logger.IsEnabled(LogLevel.Information))
+                        logger.LogInformation("{deleted} lessons deleted", deleted);
+                }
+                else
+                {
+                    logger.LogWarning("Schedule update contained no lessons; old data was kept");
+                }
 
                 if (logger.IsEnabled(LogLevel.Information))
                     logger.LogInformation("Database updated");
