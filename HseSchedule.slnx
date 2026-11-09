@@ -1,8 +1,10 @@
 <Solution>
+  <Folder Name="/Schedule/">
+    <Project Path="Schedule.API\Schedule.API.csproj" />
+    <Project Path="Schedule.Shared\Schedule.Shared.csproj" />
+    <Project Path="Schedule.Updater\Schedule.Updater.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="compose.yaml" />
   </Folder>
-  <Project Path="ScheduleAPI\ScheduleAPI.csproj" />
-  <Project Path="ScheduleUpdater/ScheduleUpdater.csproj" />
-  <Project Path="Shared/Shared.csproj" />
 </Solution>
