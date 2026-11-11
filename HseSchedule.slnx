@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Deadlines/">
+    <Project Path="Deadlines.API/Deadlines.API.csproj" />
+  </Folder>
   <Folder Name="/Schedule/">
     <Project Path="Schedule.API\Schedule.API.csproj" />
     <Project Path="Schedule.Shared\Schedule.Shared.csproj" />
