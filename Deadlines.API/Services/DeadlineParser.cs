@@ -3,7 +3,7 @@ using Ical.Net;
 
 namespace Deadlines.API.Services;
 
-public class DeadlineParser(HttpClient httpClient)
+public class DeadlineParser(HttpClient httpClient, CourseNamesProvider courseNamesProvider)
 {
     async Task<string> GetCalendarContentAsync(
         string calendarUrl,
@@ -27,6 +27,13 @@ public class DeadlineParser(HttpClient httpClient)
             throw new ArgumentException("Calendar content is null.", nameof(calendarUrl));
         }
         
-        return calendar.Events.Select(Deadline.FromEvent).ToList();
+        var deadlines = calendar.Events.Select(Deadline.FromEvent).ToList();
+        foreach (var deadline in deadlines)
+        {
+            if (courseNamesProvider.CourseNames.TryGetValue(deadline.CourseId, out var courseName))
+                deadline.CourseName = courseName;
+        }
+
+        return deadlines;
     }
 }

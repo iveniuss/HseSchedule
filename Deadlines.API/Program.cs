@@ -14,6 +14,7 @@ public class Program
         
         builder.Services.AddControllers();
         builder.Services.AddHttpClient<Services.DeadlineParser>();
+        builder.Services.AddSingleton<Services.CourseNamesProvider>();
         
         builder.Services.AddRateLimiter(options =>
         {
