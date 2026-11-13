@@ -1,5 +1,6 @@
 using Deadlines.API.Models;
 using Ical.Net;
+using System.Text.RegularExpressions;
 
 namespace Deadlines.API.Services;
 
@@ -31,9 +32,17 @@ public class DeadlineParser(HttpClient httpClient, CourseNamesProvider courseNam
         foreach (var deadline in deadlines)
         {
             if (courseNamesProvider.CourseNames.TryGetValue(deadline.CourseId, out var courseName))
-                deadline.CourseName = courseName;
+                deadline.CourseName = Regex.Replace(
+                    courseName,
+                    @"\s*\(\d{4}/\d{4}\s+модули:\s*[^)]*\)\s*$",
+                    "",
+                    RegexOptions.IgnoreCase).TrimEnd();
+
+            deadline.Summary = deadline.Summary.Replace(" - надо сдать", "");
         }
 
         return deadlines;
     }
+    
+    
 }

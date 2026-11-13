@@ -1,10 +1,12 @@
 using Deadlines.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Deadlines.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableRateLimiting("deadlines")]
 public class DeadlineController(DeadlineParser parser) : ControllerBase
 {
     [HttpGet]
