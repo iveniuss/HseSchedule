@@ -37,6 +37,8 @@ public class DeadlineParser(HttpClient httpClient, CourseNamesProvider courseNam
                     @"\s*\(\d{4}/\d{4}\s+модули:\s*[^)]*\)\s*$",
                     "",
                     RegexOptions.IgnoreCase).TrimEnd();
+            else
+                courseNamesProvider.AddCourseIds(deadline.CourseId);
 
             deadline.Summary = deadline.Summary.Replace(" - надо сдать", "");
         }
