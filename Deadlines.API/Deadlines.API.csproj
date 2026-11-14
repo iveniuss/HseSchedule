@@ -8,9 +8,8 @@
 
     <ItemGroup>
         <PackageReference Include="Ical.Net" Version="5.2.4" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="11.0.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="11.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.21.0" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,7 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.OpenApi;
+using Scalar.AspNetCore;
 
 namespace Deadlines.API;
 
@@ -10,7 +12,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddOpenApi();
         
         builder.Services.AddControllers();
         builder.Services.AddHttpClient<Services.DeadlineParser>();
@@ -44,8 +46,8 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.MapOpenApi();
+            app.MapScalarApiReference(options => options.DisableAgent());
         }
 
         app.UseHttpsRedirection();
