@@ -18,16 +18,28 @@ public class DeadlineParser(HttpClient httpClient, CourseNamesProvider courseNam
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
 
+
+    /// <summary>
+    /// Retrieves and parses deadlines from the user's HSE calendar.
+    /// </summary>
+    /// <param name="userId">The calendar owner's user ID.</param>
+    /// <param name="authToken">The authentication token for the calendar export.</param>
+    /// <param name="cancellationToken">A token to cancel the calendar request or response read.</param>
+    /// <returns>The parsed deadlines, with course names populated when available.</returns>
+    /// <exception cref="ArgumentException">The parsed calendar is null.</exception>
     public async Task<List<Deadline>> GetDeadlinesAsync(
-        string calendarUrl,
+        string userId,
+        string authToken,
         CancellationToken cancellationToken = default)
     {
+        var calendarUrl =
+            $"https://edu.hse.ru/calendar/export_execute.php?userid={userId}&authtoken={authToken}&preset_what=all&preset_time=recentupcoming";
         var calendar = Calendar.Load(await GetCalendarContentAsync(calendarUrl, cancellationToken));
         if (calendar == null)
         {
             throw new ArgumentException("Calendar content is null.", nameof(calendarUrl));
         }
-        
+
         var deadlines = calendar.Events.Select(Deadline.FromEvent).ToList();
         foreach (var deadline in deadlines)
         {
@@ -45,6 +57,4 @@ public class DeadlineParser(HttpClient httpClient, CourseNamesProvider courseNam
 
         return deadlines;
     }
-    
-    
 }
