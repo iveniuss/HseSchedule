@@ -10,4 +10,5 @@
   <Folder Name="/Solution Items/">
     <File Path="compose.yaml" />
   </Folder>
+  <Project Path="Account/Account.csproj" />
 </Solution>
