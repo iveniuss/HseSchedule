@@ -6,7 +6,7 @@ namespace Account.Models;
 public class User: IdentityUser
 {
     [MaxLength(32)]
-    public string? GroupId { get; set; }
+    public string? MainGroupId { get; set; }
     [MaxLength(32)]
     public string? TrackId { get; set; }
     

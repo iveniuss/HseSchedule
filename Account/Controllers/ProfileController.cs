@@ -31,7 +31,7 @@ public class ProfileController(AppDbContext dbContext) : ControllerBase
         if (await dbContext.MainGroups.FindAsync(groupId) == null)
             return BadRequest();
         
-        user.GroupId = groupId;
+        user.MainGroupId = groupId;
         
         try
         {
