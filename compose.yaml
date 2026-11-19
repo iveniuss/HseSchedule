@@ -3,7 +3,7 @@
     image: scheduleapi
     build:
       context: .
-      dockerfile: ScheduleAPI/Dockerfile
+      dockerfile: Schedule.API/Dockerfile
     ports:
       - "127.0.0.1:5001:8080"
     environment:
@@ -17,7 +17,7 @@
     image: scheduleupdater
     build:
       context: .
-      dockerfile: ScheduleUpdater/Dockerfile
+      dockerfile: Schedule.Updater/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=Data Source=/app/Data/database.db;Mode=ReadWrite;Cache=Shared
     volumes:
