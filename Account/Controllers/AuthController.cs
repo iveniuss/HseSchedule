@@ -3,6 +3,7 @@ using Account.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Account.Controllers;
 
@@ -14,6 +15,8 @@ public sealed class AuthController(
 {
     [HttpPost("register")]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var user = new User
@@ -38,6 +41,8 @@ public sealed class AuthController(
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<LoginResponse>(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var result = await signInManager.PasswordSignInAsync(
@@ -46,7 +51,15 @@ public sealed class AuthController(
             request.RememberMe,
             lockoutOnFailure: true);
 
-        return result.Succeeded ? Ok() : Unauthorized();
+        if (!result.Succeeded)
+        {
+            if (result.IsLockedOut)
+                return Unauthorized(new LoginResponse(LoginError.UserIsLockedOut));
+
+            return Unauthorized(new LoginResponse(LoginError.WrongLoginOrPassword));
+        }
+
+        return Ok();
     }
 }
 

@@ -8,10 +8,12 @@ namespace Account.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 [Authorize]
 public class ProfileController(AppDbContext dbContext) : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Get()
     {
         return Ok(new ProfileResponse(
@@ -20,6 +22,9 @@ public class ProfileController(AppDbContext dbContext) : ControllerBase
     }
     
     [HttpPost("[action]")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SelectGroup(string groupId)
     {
         var user = await dbContext.Users.FindAsync(
